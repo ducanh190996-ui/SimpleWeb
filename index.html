@@ -6,9 +6,15 @@
   <title>Tìm file OneDrive</title>
   <link rel="stylesheet" href="style.css">
 
-  <!-- Microsoft Authentication Library -->
-  <script src="https://alcdn.msauth.net/browser/2.38.3/js/msal-browser.min.js"></script>
+  <!-- MSAL Browser v2 - Microsoft CDN -->
+  <script
+    type="text/javascript"
+    src="https://alcdn.msauth.net/browser/2.35.0/js/msal-browser.min.js"
+    integrity="sha384-PARf28kmic36Ve+O3DnUerRXFtOQ7ZDqRDGpLcbljly5/N39T2OV3kt3QsWOKeAX"
+    crossorigin="anonymous">
+  </script>
 </head>
+
 <body>
   <main class="box">
     <h1>Tìm file trong OneDrive</h1>
@@ -25,6 +31,7 @@
     <div id="results"></div>
   </main>
 
+  <!-- script.js phải nằm sau MSAL -->
   <script src="script.js"></script>
 </body>
 </html>

@@ -1,9 +1,15 @@
 // ==========================================================
-// BƯỚC DUY NHẤT BẠN PHẢI SỬA TRONG CODE:
-// Thay YOUR_CLIENT_ID_HERE bằng Application (client) ID
-// lấy từ Microsoft Entra ID > App registrations.
+// THAY CLIENT ID CỦA BẠN VÀO ĐÂY
+// Microsoft Entra ID > App registrations > Overview
+// > Application (client) ID
 // ==========================================================
 const CLIENT_ID = "5427bd22-d4cd-42a4-828b-c7734def0345";
+
+if (typeof msal === "undefined") {
+  document.getElementById("status").textContent =
+    "Lỗi: không tải được thư viện Microsoft MSAL.";
+  throw new Error("MSAL library was not loaded.");
+}
 
 const msalConfig = {
   auth: {
@@ -12,7 +18,8 @@ const msalConfig = {
     redirectUri: window.location.origin + "/"
   },
   cache: {
-    cacheLocation: "sessionStorage"
+    cacheLocation: "sessionStorage",
+    storeAuthStateInCookie: false
   }
 };
 
@@ -30,6 +37,9 @@ const statusText = document.getElementById("status");
 const resultsDiv = document.getElementById("results");
 
 function getAccount() {
+  const active = msalInstance.getActiveAccount();
+  if (active) return active;
+
   const accounts = msalInstance.getAllAccounts();
   return accounts.length > 0 ? accounts[0] : null;
 }
@@ -45,28 +55,34 @@ function updateAccountText() {
 }
 
 async function login() {
-  if (CLIENT_ID === "YOUR_CLIENT_ID_HERE") {
-    alert("Bạn chưa thay CLIENT_ID trong file script.js.");
+  if (CLIENT_ID === "YOUR_CLIENT_ID_HERE" || !CLIENT_ID.trim()) {
+    alert("Hãy thay YOUR_CLIENT_ID_HERE trong script.js bằng Application (client) ID của bạn.");
     return;
   }
 
+  statusText.textContent = "Đang mở đăng nhập Microsoft...";
+
   try {
     const response = await msalInstance.loginPopup(loginRequest);
-    msalInstance.setActiveAccount(response.account);
+
+    if (response.account) {
+      msalInstance.setActiveAccount(response.account);
+    }
+
     updateAccountText();
     statusText.textContent = "Đăng nhập thành công.";
   } catch (error) {
     console.error(error);
-    statusText.textContent = "Đăng nhập thất bại: " + error.message;
+    statusText.textContent = "Đăng nhập thất bại: " + (error.message || error);
   }
 }
 
 async function getAccessToken() {
-  let account = msalInstance.getActiveAccount() || getAccount();
+  let account = getAccount();
 
   if (!account) {
     await login();
-    account = msalInstance.getActiveAccount() || getAccount();
+    account = getAccount();
   }
 
   if (!account) {
@@ -76,14 +92,14 @@ async function getAccessToken() {
   try {
     const response = await msalInstance.acquireTokenSilent({
       scopes: ["Files.Read"],
-      account: account
+      account
     });
 
     return response.accessToken;
-  } catch (error) {
+  } catch (silentError) {
     const response = await msalInstance.acquireTokenPopup({
       scopes: ["Files.Read"],
-      account: account
+      account
     });
 
     return response.accessToken;
@@ -104,15 +120,20 @@ async function searchOneDrive() {
   try {
     const token = await getAccessToken();
 
-    // Escape dấu nháy đơn cho cú pháp OData.
-    const safeKeyword = keyword.replace(/'/g, "''");
-
-    const url =
+    // Graph search theo tên/nội dung được OneDrive lập chỉ mục.
+    // Dùng URLSearchParams để encode an toàn.
+    const graphUrl = new URL(
       "https://graph.microsoft.com/v1.0/me/drive/root/search(q='" +
-      encodeURIComponent(safeKeyword) +
-      "')?$select=name,webUrl,size,lastModifiedDateTime,file,folder";
+      keyword.replace(/'/g, "''") +
+      "')"
+    );
 
-    const response = await fetch(url, {
+    graphUrl.searchParams.set(
+      "$select",
+      "name,webUrl,size,lastModifiedDateTime,file,folder"
+    );
+
+    const response = await fetch(graphUrl.toString(), {
       headers: {
         Authorization: "Bearer " + token
       }
@@ -125,7 +146,6 @@ async function searchOneDrive() {
     }
 
     const items = data.value || [];
-
     statusText.textContent = "Tìm thấy " + items.length + " kết quả.";
 
     if (items.length === 0) {
@@ -134,36 +154,33 @@ async function searchOneDrive() {
     }
 
     for (const item of items) {
-      const div = document.createElement("div");
-      div.className = "file";
+      const row = document.createElement("div");
+      row.className = "file";
+
+      const link = document.createElement("a");
+      link.href = item.webUrl;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      link.textContent = item.name;
+
+      const meta = document.createElement("div");
+      meta.className = "meta";
 
       const type = item.folder ? "Folder" : "File";
       const modified = item.lastModifiedDateTime
         ? new Date(item.lastModifiedDateTime).toLocaleString()
         : "";
 
-      div.innerHTML = `
-        <a href="${item.webUrl}" target="_blank" rel="noopener noreferrer">
-          ${escapeHtml(item.name)}
-        </a>
-        <div class="meta">${type}${modified ? " • " + modified : ""}</div>
-      `;
+      meta.textContent = modified ? `${type} • ${modified}` : type;
 
-      resultsDiv.appendChild(div);
+      row.appendChild(link);
+      row.appendChild(meta);
+      resultsDiv.appendChild(row);
     }
   } catch (error) {
     console.error(error);
-    statusText.textContent = "Lỗi: " + error.message;
+    statusText.textContent = "Lỗi: " + (error.message || error);
   }
-}
-
-function escapeHtml(text) {
-  return text
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
 }
 
 loginBtn.addEventListener("click", login);
