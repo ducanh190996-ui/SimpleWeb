@@ -11,8 +11,8 @@ body {
   background: #f3f4f6;
 }
 
-.calculator {
-  width: min(420px, 90vw);
+.box {
+  width: min(760px, 92vw);
   background: white;
   padding: 24px;
   border-radius: 14px;
@@ -21,37 +21,44 @@ body {
 
 h1 {
   margin-top: 0;
-  text-align: center;
 }
 
-label {
-  display: block;
-  margin-top: 14px;
-  margin-bottom: 6px;
-}
-
+button,
 input {
-  width: 100%;
+  font-size: 16px;
   padding: 10px 12px;
-  font-size: 18px;
-}
-
-.buttons {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
-  margin-top: 18px;
 }
 
 button {
-  padding: 12px;
-  font-size: 24px;
   cursor: pointer;
 }
 
-#result {
+.search-row {
+  display: flex;
+  gap: 10px;
   margin-top: 20px;
-  font-size: 20px;
+}
+
+.search-row input {
+  flex: 1;
+}
+
+#status {
+  min-height: 24px;
+  margin-top: 16px;
+}
+
+.file {
+  border-top: 1px solid #ddd;
+  padding: 12px 0;
+}
+
+.file a {
   font-weight: bold;
-  text-align: center;
+}
+
+.meta {
+  color: #666;
+  font-size: 13px;
+  margin-top: 4px;
 }

@@ -1,29 +1,28 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Máy tính 4 phép tính</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tìm file OneDrive</title>
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Microsoft Authentication Library -->
+  <script src="https://alcdn.msauth.net/browser/2.38.3/js/msal-browser.min.js"></script>
 </head>
 <body>
-  <main class="calculator">
-    <h1>Cộng / Trừ / Nhân / Chia</h1>
+  <main class="box">
+    <h1>Tìm file trong OneDrive</h1>
 
-    <label for="number1">Số thứ nhất</label>
-    <input id="number1" type="number" step="any" placeholder="Ví dụ: 10" />
+    <button id="loginBtn">Đăng nhập Microsoft</button>
+    <p id="account">Chưa đăng nhập</p>
 
-    <label for="number2">Số thứ hai</label>
-    <input id="number2" type="number" step="any" placeholder="Ví dụ: 3" />
-
-    <div class="buttons">
-      <button id="addBtn">+</button>
-      <button id="subBtn">−</button>
-      <button id="mulBtn">×</button>
-      <button id="divBtn">÷</button>
+    <div class="search-row">
+      <input id="keyword" type="text" placeholder="Ví dụ: servo">
+      <button id="searchBtn">Tìm kiếm</button>
     </div>
 
-    <p id="result">Kết quả: --</p>
+    <p id="status"></p>
+    <div id="results"></div>
   </main>
 
   <script src="script.js"></script>
