@@ -3,7 +3,7 @@
 // Thay YOUR_CLIENT_ID_HERE bằng Application (client) ID
 // lấy từ Microsoft Entra ID > App registrations.
 // ==========================================================
-const CLIENT_ID = "YOUR_CLIENT_ID_HERE";
+const CLIENT_ID = "5427bd22-d4cd-42a4-828b-c7734def0345";
 
 const msalConfig = {
   auth: {
