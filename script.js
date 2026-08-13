@@ -14,7 +14,7 @@ if (typeof msal === "undefined") {
 const msalConfig = {
   auth: {
     clientId: CLIENT_ID,
-    authority: "https://login.microsoftonline.com/common",
+    authority: "https://login.microsoftonline.com/consumers",
     redirectUri: window.location.origin + "/"
   },
   cache: {
