@@ -1,10 +1,14 @@
-# Simple Add/Sub Web
+# Simple Calculator Web
 
-Web siêu đơn giản thực hiện phép cộng và trừ 2 số.
+Web đơn giản thực hiện 4 phép tính:
+- Cộng
+- Trừ
+- Nhân
+- Chia
 
 ## File
-- index.html: giao diện web
+- index.html: giao diện
 - style.css: định dạng giao diện
-- script.js: xử lý phép cộng và trừ
+- script.js: xử lý 4 phép tính
 
-Mở `index.html` bằng trình duyệt để chạy thử trên máy.
+Mở `index.html` bằng trình duyệt để chạy thử.

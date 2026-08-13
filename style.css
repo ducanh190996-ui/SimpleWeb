@@ -12,7 +12,7 @@ body {
 }
 
 .calculator {
-  width: min(360px, 90vw);
+  width: min(420px, 90vw);
   background: white;
   padding: 24px;
   border-radius: 14px;
@@ -37,13 +37,13 @@ input {
 }
 
 .buttons {
-  display: flex;
-  gap: 12px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
   margin-top: 18px;
 }
 
 button {
-  flex: 1;
   padding: 12px;
   font-size: 24px;
   cursor: pointer;
